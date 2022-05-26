@@ -87,21 +87,24 @@ class _novaPubliState extends State<novaPubli> {
   
   buildAppBar() {
     return AppBar(
-      systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Color.fromARGB(255, 255, 47, 47)),
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Image.asset("images/brasao.png", height: 40),
-          Text(
-            "Página Inicial",
-            style: TextStyle(color: Colors.black),
-          ),
-          Text("PM-PB",
-              style:
-                  TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
-        ],
-      ),
-    );
+        systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Color.fromARGB(255, 255, 47, 47)),
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Image.asset("images/brasao.png", height: 40),
+            Text(
+              "Post",
+              style: TextStyle(color: Colors.black),
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return Home();
+                }));
+              },
+              icon: Icon(Icons.close, size: 30, color: Colors.black,)),
+          ],
+        ));
   }
 }

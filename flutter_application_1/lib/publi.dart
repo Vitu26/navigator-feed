@@ -219,7 +219,7 @@ class _publi extends State<publi> {
           children: [
             Image.asset("images/brasao.png", height: 40),
             Text(
-              "Post",
+              "Nova Publicação",
               style: TextStyle(color: Colors.black),
             ),
             IconButton(

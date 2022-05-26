@@ -1,5 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_application_1/main.dart';
+import 'package:flutter_application_1/pageini.dart';
+import 'package:image_picker/image_picker.dart';
+
+import 'dados.dart';
 
 class novaPubli extends StatefulWidget {
   const novaPubli({Key? key}) : super(key: key);
@@ -9,116 +16,91 @@ class novaPubli extends StatefulWidget {
 }
 
 class _novaPubliState extends State<novaPubli> {
+  
+  File? image;
+
+  get source => null;
+
+  Future pickImage(ImageSource source) async {
+    try {
+      final image = await ImagePicker().pickImage(source: source);
+      if (image == null) return;
+
+      final imageTemporaria = File(image.path);
+      setState(() => this.image = imageTemporaria);
+    } on PlatformException catch (e) {
+      print('Failed: $e');
+    }
+  }
+
+  TextEditingController edtTitulo = TextEditingController();
+  TextEditingController edtDescricao = TextEditingController();
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          color: Colors.red.shade800,
+        ),
+      ),
       home: Scaffold(
-     backgroundColor: Colors.grey.shade300,
-        appBar: AppBar(
-            backgroundColor: Colors.redAccent.shade700,
-            title: Row(
-              children: [
-                Image.asset(
-                  'Images/brasao.png',
-                  fit: BoxFit.contain,
-                  height: 40,
-                ),
-                Text(
-                  "    Nova publicação",
-                  style: TextStyle(color: Colors.black),
-                ),
-              ],
-            )),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                margin: EdgeInsets.all(25),
-                child: Row(
+        appBar: buildAppBar(),
+        body: buildBody(context),
+      ),
+    );
+  }
+
+  buildBody(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        child: Expanded(
+          child: Card(
+              child: (Container(
+                child: Column(
                   children: [
-                    CircleAvatar(
-                      radius: 30,
-                      backgroundImage: AssetImage("Images/Unknown_person.jpg"),
+                    TextField(
+                      controller: edtTitulo,
                     ),
-                    Text(
-                      "    Geraldo",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    )
+                    Container(
+                      child: image != null ? Image.file(image!) : Icon(Icons.add_box_outlined,size: 120)
+                    ),
+                    TextButton(onPressed: () => pickImage(ImageSource.gallery), child: Text("Coloque sua foto")),
+                    TextField(
+                      controller: edtDescricao,
+                    ),
+                    Container(
+                      child: Text("Teste!"),
+                    ),
+                    ElevatedButton(onPressed: () {
+                      Navigator.pop(context, Dados(edtTitulo.text, edtDescricao.text, image!));
+                    }, child: Text("APERTA"))
                   ],
                 ),
-              ),
-              Container(
-                //margin: EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(width: 1.6, color: Colors.black),
-                    bottom: BorderSide(width: 1, color: Colors.black),
-                  ),
-                ),
-                child: TextField(
-                  style: TextStyle(
-                      fontSize: 40.0, height: 1.0, color: Colors.black),
-                  decoration: InputDecoration(
-                      contentPadding: EdgeInsets.only(left: 8),
-                      hintText: "Título",
-                      hintStyle: TextStyle(fontSize: 30),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.black),
-                      )),
-                ),
-              ),
-              Container(
-                child: TextField(
-                  keyboardType: TextInputType.text,
-                  maxLines: null,
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.only(left: 8),
-                    hintText: "Descrição",
-                    hintStyle: TextStyle(fontSize: 20),
-                    focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+              )),
+            ),
         ),
-        bottomNavigationBar: Material(
-          color: Colors.red.shade700,
-          child: InkWell(
-            onTap: () {
-              //print('called on tap');
-            },
-            child: SizedBox(
-                height: 56,
-                width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.perm_media_outlined),
-                    Text(
-                      '  Adicionar foto/vídeo',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                )),
+      ),
+    );
+  }
+  
+  buildAppBar() {
+    return AppBar(
+      systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Color.fromARGB(255, 255, 47, 47)),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Image.asset("images/brasao.png", height: 40),
+          Text(
+            "Página Inicial",
+            style: TextStyle(color: Colors.black),
           ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.red.shade700,
-          onPressed: () {},
-          child: Icon(
-            Icons.check,
-            color: Colors.black,
-          ),
-        ),
+          Text("PM-PB",
+              style:
+                  TextStyle(fontWeight: FontWeight.bold, color: Colors.black)),
+        ],
       ),
     );
   }

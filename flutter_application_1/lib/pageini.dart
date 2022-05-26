@@ -1,7 +1,14 @@
+import 'dart:io';
 
 import 'package:flutter_application_1/nova_publi.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/perfil.dart';
+import 'package:flutter_application_1/publi.dart';
+import 'package:flutter_application_1/comentário.dart';
+import 'package:flutter_application_1/salvos.dart';
+
+import 'dados.dart';
 
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
@@ -11,19 +18,38 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+    List<Dados> teste = [];
+
+  get image => null;
+  
+  
+  bool salvo = false;
+  bool selecionado = false;
+  int currentIndex = 0;
+  bool _visible = true;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar(),
-      body: buildBody(),
-      floatingActionButton: buildFloatingActionButton(),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          color: Colors.red.shade800,
+        ),
+      ),
+      home: Scaffold(
+        backgroundColor: Colors.grey.shade300,
+        appBar: buildAppBar(),
+        body: buildBody(),
+        floatingActionButton: buildFloatingActionButton(),
+        bottomNavigationBar: buildBottomNavigationbar(),
+      ),
     );
   }
 
   buildAppBar() {
     return AppBar(
-      systemOverlayStyle:
-          SystemUiOverlayStyle(statusBarColor: Color.fromARGB(255, 255, 47, 47)),
+      systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Color.fromARGB(255, 255, 47, 47)),
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -41,353 +67,116 @@ class _HomeState extends State<Home> {
   }
 
   buildBody() {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Container(
-            child: Column(
-              children: [
-                Card(
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                              margin: EdgeInsets.fromLTRB(10, 10, 0, 0),
-                              child:
-                                  Image.asset("images/police.png", height: 40)),
-                          Container(
-                              margin: EdgeInsets.all(10),
-                              child: Text.rich(TextSpan(children: <TextSpan>[
-                                TextSpan(
-                                    text: "Policial Santos\n",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold)),
-                                TextSpan(
-                                    text: "Há 13min",
-                                    style: TextStyle(fontSize: 10))
-                              ]))),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                  margin: EdgeInsets.fromLTRB(25, 12, 0, 0),
-                                  child: Text(
-                                    "Adolescentes são abordados com maconha",
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold),
-                                  )),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: Container(
-                                margin: EdgeInsets.all(7),
-                                child: Text(
-                                  "Suspeitos foram encontrados com maconha nas redondezas do Mangabeira.",
-                                  style: TextStyle(fontSize: 15),
-                                  textAlign: TextAlign.justify,
-                                ),
-                              )),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: Image.asset("images/policial.png")),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Container(
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(Icons.thumb_up_alt_outlined),
-                                      onPressed: () {},
-                                    ),
-                                    Text(
-                                      "13",
-                                      style: TextStyle(fontSize: 15),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              IconButton(
-                                  icon: Icon(Icons.comment_outlined),
-                                  onPressed: () {}),
-                              IconButton(
-                                  icon: Icon(Icons.bookmark_border),
-                                  onPressed: () {}),
-                              IconButton(
-                                  icon: Icon(Icons.share), onPressed: () {}),
-                            ],
-                          ),
-                          Card(
-                            color: Colors.grey.shade300,
-                            child: Row(
-                              children: [
-                                IconButton(
-                                    icon: Icon(Icons.account_circle),
-                                    onPressed: () {}),
-                                Column(
-                                  children: [
-                                    Text.rich(TextSpan(children: <TextSpan>[
-                                      TextSpan(
-                                          text: "Marcos\n",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold)),
-                                      TextSpan(
-                                        text: "Essa juventude está perdida!",
-                                      )
-                                    ]))
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                          Card(
-                            color: Colors.grey.shade300,
-                            child: Row(
-                              children: [
-                                IconButton(
-                                    icon: Icon(Icons.account_circle),
-                                    onPressed: () {}),
-                                Column(
-                                  children: [
-                                    Text.rich(TextSpan(children: <TextSpan>[
-                                      TextSpan(
-                                          text: "Pedro\n",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold)),
-                                      TextSpan(
-                                        text: "Parabéns Senhores !",
-                                      )
-                                    ]))
-                                  ],
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+    return ListView.builder(
+        itemCount: teste.length,
+        itemBuilder: (context, index) {
+          return buildItem(index);
+        });
+  }
+
+  buildItem(index) {
+    return Container(
+      child: Expanded(
+        child: Card(
+          child: Column(
+            children: [
+              Text("${teste[index].titulo}",style: TextStyle(fontWeight: FontWeight.bold)),
+              Text("${teste[index].descricao}",),
+              Row(
+                children: [
+                  Expanded(child:image != null ? Image.file(image!) : Image.file(teste[index].image)), 
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  IconButton(
+                      onPressed: () {}, icon: Icon(Icons.thumb_up_alt_outlined)),
+                  IconButton(
+                      onPressed: () {}, icon: Icon(Icons.comment_outlined)),
+                  IconButton(
+                      onPressed: () {}, icon: Icon(Icons.bookmark_outline)),
+                  IconButton(onPressed: () {}, icon: Icon(Icons.share_outlined))
+                ],
+              )
+            ],
           ),
-          Container(
-            child: Column(
-              children: [
-                Card(
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                              margin: EdgeInsets.fromLTRB(10, 10, 0, 0),
-                              child: Image.asset(
-                                "images/police.png",
-                                height: 40,
-                              )),
-                          Container(
-                            margin: EdgeInsets.only(left: 13),
-                            child: Text("Policial Santana",
-                                style: TextStyle(
-                                    fontSize: 17, fontWeight: FontWeight.bold)),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                  margin: EdgeInsets.fromLTRB(15, 20, 0, 10),
-                                  child: Text("Lorem ipsum dolor sit amet",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold)))
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: Image.asset("images/policial.png")),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: Container(
-                                margin: EdgeInsets.all(7),
-                                child: Text(
-                                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus tempor eros id sem suscipit, et sollicitudin est ultricies. Proin condimentum iaculis ipsum a consequat. Nam porta nisl arcu, vitae aliquam tortor tempus et. Nam sed risus nec arcu ullamcorper euismod.",
-                                  style: TextStyle(fontSize: 15),
-                                  textAlign: TextAlign.justify,
-                                ),
-                              )),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Container(
-                                  margin: EdgeInsets.only(left: 9),
-                                  child: Text(
-                                    "Há 1h",
-                                    style: TextStyle(fontSize: 11),
-                                  ))
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Container(
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(Icons.thumb_up_alt_outlined),
-                                      onPressed: () {},
-                                    ),
-                                    Text(
-                                      "16",
-                                      style: TextStyle(fontSize: 15),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              IconButton(
-                                  icon: Icon(Icons.comment_outlined),
-                                  onPressed: () {}),
-                              IconButton(
-                                  icon: Icon(Icons.bookmark_border),
-                                  onPressed: () {}),
-                              IconButton(
-                                  icon: Icon(Icons.share), onPressed: () {}),
-                            ],
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            child: Column(
-              children: [
-                Card(
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                              margin: EdgeInsets.only(left: 13),
-                              child:
-                                  Image.asset("images/police.png", height: 40)),
-                          Text("Policial Barbosa",
-                              style: TextStyle(
-                                  fontSize: 17, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                  margin: EdgeInsets.fromLTRB(15, 20, 0, 10),
-                                  child: Text("Lorem ipsum dolor sit amet",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold)))
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: Image.asset("images/policial.png"))
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                  child: Container(
-                                margin: EdgeInsets.all(7),
-                                child: Text(
-                                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus tempor eros id sem suscipit, et sollicitudin est ultricies. Proin condimentum iaculis ipsum a consequat. Nam porta nisl arcu, vitae aliquam tortor tempus et. Nam sed risus nec arcu ullamcorper euismod.",
-                                  style: TextStyle(fontSize: 15),
-                                  textAlign: TextAlign.justify,
-                                ),
-                              )),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(left: 9),
-                                child: Text("Há 2h",
-                                    style: TextStyle(fontSize: 11)),
-                              )
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Container(
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                      icon: Icon(Icons.thumb_up_alt_outlined),
-                                      onPressed: () {},
-                                    ),
-                                    Text(
-                                      "25",
-                                      style: TextStyle(fontSize: 15),
-                                    )
-                                  ],
-                                ),
-                              ),
-                              IconButton(
-                                  icon: Icon(Icons.comment_outlined),
-                                  onPressed: () {}),
-                              IconButton(
-                                  icon: Icon(Icons.bookmark_border),
-                                  onPressed: () {}),
-                              IconButton(
-                                  icon: Icon(Icons.share), onPressed: () {}),
-                            ],
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
   buildFloatingActionButton() {
     return FloatingActionButton(
-      onPressed: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
+      onPressed: () async {
+        Dados dados =
+            await Navigator.push(context, MaterialPageRoute(builder: (context) {
           return novaPubli();
-        }),
-        );
+        }));
+
+        setState(() {
+          teste.add(dados);
+        });
       },
-      child: Icon(Icons.add_rounded, color: Colors.black, size: 30),
+      child: Icon(Icons.add, color: Colors.black,),
+      backgroundColor: Colors.red.shade700,
+    );
+  }
+
+  buildBottomNavigationbar() {
+    return BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
       backgroundColor: Colors.red.shade800,
+      selectedFontSize: 12,
+      selectedItemColor: Colors.grey.shade300,
+      unselectedItemColor: Colors.black,
+      iconSize: 30,
+      currentIndex: currentIndex,
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
+      onTap: (index) => setState(() => currentIndex = index),
+      items: [
+        BottomNavigationBarItem(
+            icon: IconButton(
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return Home();
+                }));
+              },
+              icon: Icon(Icons.home),
+              color: Colors.black,
+            ),
+            label: "Página Inicial"),
+        BottomNavigationBarItem(
+            icon: IconButton(
+              icon: Icon(
+                Icons.search,
+                color: Colors.black,
+              ),
+              onPressed: () {},
+            ),
+            label: "Procurar"),
+        BottomNavigationBarItem(
+            icon: IconButton(
+              icon: Icon(Icons.groups_rounded),
+              onPressed: () {},
+              color: Colors.black,
+            ),
+            label: "Grupos"),
+        BottomNavigationBarItem(
+            icon: IconButton(
+              icon: Icon(
+                Icons.bookmark,
+                color: Colors.black,
+              ),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return Salvos();
+                }));
+              },
+            ),
+            label: "Salvos"),
+      ],
     );
   }
 }
